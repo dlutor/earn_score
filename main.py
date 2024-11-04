@@ -6,6 +6,7 @@ if __name__ == '__main__':
     import os
 
     encrypt_key = os.environ.get("PRIVATE_AES_KEY")
+    print(encrypt_key)
     encrypt = Encrypt(encrypt_key)
 
     data_e = tool.read("data.txt")
