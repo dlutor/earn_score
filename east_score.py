@@ -4,6 +4,8 @@ from urllib.parse import urlparse, parse_qs
 
 tool = Model()
 
+day_format = "%Y/%m/%d"
+time_format = "%H:%M:%S"
 
 class Score():
     def __init__(self, ct, ut):
@@ -38,7 +40,6 @@ class Score():
         r_data = tool.get(url, headers=self.task_headers).json()
         # print(r_data)
         last_time = r_data["data"]["FinishSignInTimeList"]
-        print(last_time)
         if last_time:
             last_time = last_time[-1]
         else:
@@ -135,16 +136,14 @@ class Score():
         return market
 
     def print(self, *args, **kwargs):
-        time = datetime.datetime.now().strftime("%Y/%#m/%#d %H:%M:%S")
+        time = datetime.datetime.now().strftime(f"{day_format} {time_format}")
         print(time, *args, **kwargs)
-
 
     def main(self):
         self.print(f"开始刷新...")
-        date = datetime.datetime.now().strftime("%Y/%#m/%#d")
-        print(date)
+        date = datetime.datetime.now().strftime(day_format)
         finished = 0
-        last_login = self.get_last_login()
+        last_login = datetime.datetime.strptime(self.get_last_login(), day_format).strftime(day_format)
         if date != last_login:
             key = f"[0] 签到"
             self.print(f"{key}...")
