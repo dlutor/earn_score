@@ -142,6 +142,7 @@ class Score():
     def main(self):
         self.print(f"开始刷新...")
         date = datetime.datetime.now().strftime("%Y/%#m/%#d")
+        print(date)
         finished = 0
         last_login = self.get_last_login()
         if date != last_login:
