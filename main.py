@@ -12,7 +12,8 @@ if __name__ == '__main__':
     datas = encrypt.decrypt_json(data_e)
 
     for i, data in enumerate(datas):
-        score = Score(ct=data["ct"], ut=data["ut"])
-        score.print(f"账号[{i+1}/{len(datas)}]")
+        print_key = f"账号[{i+1}/{len(datas)}]"
+        score = Score(ct=data["ct"], ut=data["ut"], print_key=print_key)
+        # score.print(print_key)
         score.main()
 
