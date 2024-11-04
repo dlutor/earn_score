@@ -8,9 +8,10 @@ day_format = "%Y/%m/%d"
 time_format = "%H:%M:%S"
 
 class Score():
-    def __init__(self, ct, ut):
+    def __init__(self, ct, ut, print_key=""):
         self.ct = ct
         self.ut = ut
+        self.print_key = print_key
         self.task_headers = {
             "em-os": "android",
             "em-ver": "10.10.1",
@@ -137,7 +138,7 @@ class Score():
 
     def print(self, *args, **kwargs):
         time = datetime.datetime.now().strftime(f"{day_format} {time_format}")
-        print(time, *args, **kwargs)
+        print(time, self.print_key, *args, **kwargs)
 
     def main(self):
         self.print(f"开始刷新...")
