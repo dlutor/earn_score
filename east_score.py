@@ -38,6 +38,7 @@ class Score():
         r_data = tool.get(url, headers=self.task_headers).json()
         # print(r_data)
         last_time = r_data["data"]["FinishSignInTimeList"]
+        print(last_time)
         if last_time:
             last_time = last_time[-1]
         else:
