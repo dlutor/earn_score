@@ -11,7 +11,9 @@ if __name__ == '__main__':
     data_e = tool.read("data.txt")
     datas = encrypt.decrypt_json(data_e)
 
-    for data in datas:
-        score = Score(ct=data["ct"], ut=data["ut"])
+    for i, data in enumerate(datas):
+        print_key = f"账号[{i+1}/{len(datas)}]"
+        score = Score(ct=data["ct"], ut=data["ut"], print_key=print_key)
+        # score.print(print_key)
         score.main()
 

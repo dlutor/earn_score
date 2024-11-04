@@ -4,11 +4,14 @@ from urllib.parse import urlparse, parse_qs
 
 tool = Model()
 
+day_format = "%Y/%m/%d"
+time_format = "%H:%M:%S"
 
 class Score():
-    def __init__(self, ct, ut):
+    def __init__(self, ct, ut, print_key=""):
         self.ct = ct
         self.ut = ut
+        self.print_key = print_key
         self.task_headers = {
             "em-os": "android",
             "em-ver": "10.10.1",
@@ -134,15 +137,14 @@ class Score():
         return market
 
     def print(self, *args, **kwargs):
-        time = datetime.datetime.now().strftime("%Y/%#m/%#d %H:%M:%S")
-        print(time, *args, **kwargs)
-
+        time = datetime.datetime.now().strftime(f"{day_format} {time_format}")
+        print(time, self.print_key, *args, **kwargs)
 
     def main(self):
         self.print(f"开始刷新...")
-        date = datetime.datetime.now().strftime("%Y/%#m/%#d")
+        date = datetime.datetime.now().strftime(day_format)
         finished = 0
-        last_login = self.get_last_login()
+        last_login = datetime.datetime.strptime(self.get_last_login(), day_format).strftime(day_format)
         if date != last_login:
             key = f"[0] 签到"
             self.print(f"{key}...")
@@ -156,7 +158,7 @@ class Score():
             tasks = []
 
         task_nums = len(tasks)
-        self.print(f"任务数量 {task_nums}...")
+        self.print(f"任务数量 {task_nums}")
         for i, task in enumerate(tasks):
             if task['TaskReceiveDate'] is None:
                 task_id = task['TaskID']
@@ -198,7 +200,7 @@ class Score():
                         r_data = self.remove_fund(code=code)
                         self.status(r_data=r_data, key=key)
 
-        self.print(f"完成任务数量: {finished}/{task_nums}.")
+        self.print(f"完成任务数量: {finished}/{task_nums}")
         self.print("刷新完成!")
 
 
