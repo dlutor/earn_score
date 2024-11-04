@@ -158,7 +158,7 @@ class Score():
             tasks = []
 
         task_nums = len(tasks)
-        self.print(f"任务数量 {task_nums}...")
+        self.print(f"任务数量 {task_nums}")
         for i, task in enumerate(tasks):
             if task['TaskReceiveDate'] is None:
                 task_id = task['TaskID']
@@ -200,7 +200,7 @@ class Score():
                         r_data = self.remove_fund(code=code)
                         self.status(r_data=r_data, key=key)
 
-        self.print(f"完成任务数量: {finished}/{task_nums}.")
+        self.print(f"完成任务数量: {finished}/{task_nums}")
         self.print("刷新完成!")
 
 
