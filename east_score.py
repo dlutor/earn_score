@@ -1,6 +1,7 @@
 from network import Model
 import json, datetime
 from urllib.parse import urlparse, parse_qs
+import os
 
 tool = Model()
 
@@ -8,9 +9,11 @@ day_format = "%Y/%m/%d"
 time_format = "%H:%M:%S"
 
 class Score():
-    def __init__(self, ct, ut, print_key=""):
+    def __init__(self, ct, ut, print_key="", log_dir="logs"):
         self.ct = ct
         self.ut = ut
+        self.log_dir = log_dir
+        os.makedirs(log_dir, exist_ok=True)
         self.print_key = print_key
         self.task_headers = {
             "em-os": "android",
@@ -60,20 +63,20 @@ class Score():
         r_data = tool.post(url, data=json.dumps(data), headers=self.task_headers).json()
         return r_data
 
-    def add_zixuan(self, code="1$530050"):
+    def add_zixuan(self, code="1$530050", g=6):
         url = "https://myfavor.eastmoney.com/v4/mobile/aslotmgrp"
         data = {
             "scs": code,
-            "gis": "6"
+            "gis": str(g),
         }
         r_data = tool.post(url, data=json.dumps(data), headers=self.zixuan_headers).json()
         return r_data
 
-    def remove_zixuan(self, code="1$530050"):
+    def remove_zixuan(self, code="1$530050", g=6):
         url = "https://myfavor.eastmoney.com/v4/mobile/dslotmg"
         data = {
             "scs": code,
-            "gis": "6"
+            "gis": str(g),
         }
         r_data = tool.post(url, data=json.dumps(data), headers=self.zixuan_headers).json()
         return r_data
@@ -139,6 +142,15 @@ class Score():
     def print(self, *args, **kwargs):
         time = datetime.datetime.now().strftime(f"{day_format} {time_format}")
         print(time, self.print_key, *args, **kwargs)
+        self.log(time, self.print_key, *args, **kwargs)
+
+    def log(self, *args, **kwargs):
+        time = datetime.datetime.now().strftime("%Y_%m_%d")
+        log_file = f"{self.log_dir}/log_{time}.txt"
+        log_content = " ".join(map(str, args)) + "\n"
+        # 将日志写入文件
+        with open(log_file, "a", encoding="utf-8") as f:
+            f.write(log_content)
 
     def main(self):
         self.print(f"开始刷新...")
