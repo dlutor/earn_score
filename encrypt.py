@@ -83,8 +83,8 @@ class Encrypt:
 
 if __name__ == '__main__':
     import json
-    key = 'ONxYDyNaCoyTzsp83JoQ3YYuMPHxk3j7'
-    # iv = 'yNaCoyTzsp83JoQ3'
+    key = ''
+    # iv = ''
     iv = ""
 
 #     ts = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
