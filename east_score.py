@@ -156,7 +156,11 @@ class Score():
         self.print(f"开始刷新...")
         date = datetime.datetime.now().strftime(day_format)
         finished = 0
-        last_login = datetime.datetime.strptime(self.get_last_login(), day_format).strftime(day_format)
+        last_login_str = self.get_last_login()
+        if last_login_str:
+            last_login = datetime.datetime.strptime(last_login_str, day_format).strftime(day_format)
+        else:
+            last_login = last_login_str
         if date != last_login:
             key = f"[0] 签到"
             self.print(f"{key}...")
@@ -200,7 +204,7 @@ class Score():
 
                     # elif code[:3] == "AXT":
                     else:
-                        code = self.search_market(code) + "$" + code.split("|")[-1]
+                        code = str(self.search_market(code)) + "$" + code.split("|")[-1]
 
                         key = f"[{i+1}/{task_nums}] 添加基金自选  {code}"
                         self.print(f"{key}...")
