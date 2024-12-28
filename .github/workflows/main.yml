@@ -16,7 +16,7 @@ env:
   TZ: Asia/Shanghai
 
 permissions:
-  contents: read, write
+  contents: actions
 
 jobs:
   build:
