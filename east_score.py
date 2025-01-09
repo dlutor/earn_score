@@ -167,11 +167,12 @@ class Score():
             r_data = self.login()
             finished += self.status(r_data=r_data, key=key)
 
-        tasks = self.get_task_list()["data"]
-        if len(tasks) == 2:
-            tasks = tasks[0]["TaskList"]
-        else:
-            tasks = []
+        tasks_ = self.get_task_list()["data"]
+        tasks = []
+        for task in tasks_:
+            if "TaskList" in task.keys():
+                task_ = task["TaskList"]
+                tasks += task_
 
         task_nums = len(tasks)
         self.print(f"任务数量 {task_nums}")
