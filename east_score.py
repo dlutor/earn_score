@@ -1,6 +1,7 @@
 from network import Model
 import json, datetime
 from urllib.parse import urlparse, parse_qs
+import os
 
 tool = Model()
 
@@ -8,9 +9,11 @@ day_format = "%Y/%m/%d"
 time_format = "%H:%M:%S"
 
 class Score():
-    def __init__(self, ct, ut, print_key=""):
+    def __init__(self, ct, ut, print_key="", log_dir="logs"):
         self.ct = ct
         self.ut = ut
+        self.log_dir = log_dir
+        os.makedirs(log_dir, exist_ok=True)
         self.print_key = print_key
         self.task_headers = {
             "em-os": "android",
@@ -60,20 +63,20 @@ class Score():
         r_data = tool.post(url, data=json.dumps(data), headers=self.task_headers).json()
         return r_data
 
-    def add_zixuan(self, code="1$530050"):
+    def add_zixuan(self, code="1$530050", g=6):
         url = "https://myfavor.eastmoney.com/v4/mobile/aslotmgrp"
         data = {
             "scs": code,
-            "gis": "6"
+            "gis": str(g),
         }
         r_data = tool.post(url, data=json.dumps(data), headers=self.zixuan_headers).json()
         return r_data
 
-    def remove_zixuan(self, code="1$530050"):
+    def remove_zixuan(self, code="1$530050", g=6):
         url = "https://myfavor.eastmoney.com/v4/mobile/dslotmg"
         data = {
             "scs": code,
-            "gis": "6"
+            "gis": str(g),
         }
         r_data = tool.post(url, data=json.dumps(data), headers=self.zixuan_headers).json()
         return r_data
@@ -139,23 +142,37 @@ class Score():
     def print(self, *args, **kwargs):
         time = datetime.datetime.now().strftime(f"{day_format} {time_format}")
         print(time, self.print_key, *args, **kwargs)
+        self.log(time, self.print_key, *args, **kwargs)
+
+    def log(self, *args, **kwargs):
+        time = datetime.datetime.now().strftime("%Y_%m_%d")
+        log_file = f"{self.log_dir}/log_{time}.txt"
+        log_content = " ".join(map(str, args)) + "\n"
+        # 将日志写入文件
+        with open(log_file, "a", encoding="utf-8") as f:
+            f.write(log_content)
 
     def main(self):
         self.print(f"开始刷新...")
         date = datetime.datetime.now().strftime(day_format)
         finished = 0
-        last_login = datetime.datetime.strptime(self.get_last_login(), day_format).strftime(day_format)
+        last_login_str = self.get_last_login()
+        if last_login_str:
+            last_login = datetime.datetime.strptime(last_login_str, day_format).strftime(day_format)
+        else:
+            last_login = last_login_str
         if date != last_login:
             key = f"[0] 签到"
             self.print(f"{key}...")
             r_data = self.login()
             finished += self.status(r_data=r_data, key=key)
 
-        tasks = self.get_task_list()["data"]
-        if len(tasks) == 2:
-            tasks = tasks[0]["TaskList"]
-        else:
-            tasks = []
+        tasks_ = self.get_task_list()["data"]
+        tasks = []
+        for task in tasks_:
+            if "TaskList" in task.keys():
+                task_ = task["TaskList"]
+                tasks += task_
 
         task_nums = len(tasks)
         self.print(f"任务数量 {task_nums}")
@@ -188,7 +205,7 @@ class Score():
 
                     # elif code[:3] == "AXT":
                     else:
-                        code = self.search_market(code) + "$" + code.split("|")[-1]
+                        code = str(self.search_market(code)) + "$" + code.split("|")[-1]
 
                         key = f"[{i+1}/{task_nums}] 添加基金自选  {code}"
                         self.print(f"{key}...")

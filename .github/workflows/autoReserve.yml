@@ -16,7 +16,7 @@ env:
   TZ: Asia/Shanghai
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -49,4 +49,10 @@ jobs:
           PRIVATE_AES_KEY: ${{ secrets.PRIVATE_AES_KEY }}
         run: |
           python main.py
+
+          git config --local user.name "dlutor"
+          git config --local user.email "3069793928@qq.com"
+          git add logs/
+          git commit -m "Update logs"
+          git push
 
